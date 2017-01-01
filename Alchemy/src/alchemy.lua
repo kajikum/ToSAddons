@@ -16,9 +16,9 @@ local acutil = require('acutil');
 
 -- default settings
 if not g.loaded then
-	g.settings = {
-		selected = "Hat_628047"
-	};
+    g.settings = {
+        selected = "Hat_628047"
+    };
 end
 
 -- define recipes
@@ -1710,77 +1710,77 @@ CHAT_SYSTEM(string.format("%s.lua is loaded", addonName));
 
 -- save settings
 function TEMPLATE_SAVESETTINGS()
-	acutil.saveJSON(g.settingsFileLoc, g.settings);
+    acutil.saveJSON(g.settingsFileLoc, g.settings);
 end
 
 -- initialize
 function ALCHEMY_ON_INIT(addon, frame)
-	g.addon = addon;
-	g.frame = frame;
-	
-	if not g.loaded then
-		local settings, err = acutil.loadJSON(g.settingsFileLoc, g.settings);
-		if err then
-			CHAT_SYSTEM(string.format("[%s] cannot load setting files", addonName));
-		else
-			g.settings = settings;
-		end
-		g.loaded = true;
-	end
-	
-	acutil.setupHook(ON_PUZZLECRAFT_OPEN, 'PUZZLECRAFT_OPEN');
+    g.addon = addon;
+    g.frame = frame;
+
+    if not g.loaded then
+        local settings, err = acutil.loadJSON(g.settingsFileLoc, g.settings);
+        if err then
+            CHAT_SYSTEM(string.format("[%s] cannot load setting files", addonName));
+        else
+            g.settings = settings;
+        end
+        g.loaded = true;
+    end
+
+    acutil.setupHook(ON_PUZZLECRAFT_OPEN, 'PUZZLECRAFT_OPEN');
 end
 
 -- on puzzlecraft open
 function ON_PUZZLECRAFT_OPEN(frame)
-	local puzzlecraft = ui.GetFrame('puzzlecraft');
-	local bg = GET_CHILD(puzzlecraft, 'bg');
-	
-	-- create or get droplist
-	local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 205, 50);
-	tolua.cast(recipes, 'ui::CDropList');
-	recipes:SetSkinName('droplist_normal');
-	recipes:SetGravity(ui.LEFT, ui.TOP);
-	recipes:SetMargin(112, 29, 0, 0);
-	recipes:Move(0,0);
-	recipes:SetFontName('white_20_ol');
-	recipes:SetTextAlign('left', 'center');
+    local puzzlecraft = ui.GetFrame('puzzlecraft');
+    local bg = GET_CHILD(puzzlecraft, 'bg');
 
-	-- load recipes
-	recipes:ClearItems();
-	for itemId, recipe in pairs(g.recipeList) do
-		local item = GetClass('Item', itemId);
-		recipes:AddItem(itemId, item.Name);
-	end
-	recipes:SetSelectedScp('ON_SELECT_RECIPE');
-	recipes:SelectItemByKey(g.settings.selected);
+    -- create or get droplist
+    local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 205, 50);
+    tolua.cast(recipes, 'ui::CDropList');
+    recipes:SetSkinName('droplist_normal');
+    recipes:SetGravity(ui.LEFT, ui.TOP);
+    recipes:SetMargin(112, 29, 0, 0);
+    recipes:Move(0,0);
+    recipes:SetFontName('white_20_ol');
+    recipes:SetTextAlign('left', 'center');
 
-	-- chain original function
-	PUZZLECRAFT_OPEN_OLD(frame);
+    -- load recipes
+    recipes:ClearItems();
+    for itemId, recipe in pairs(g.recipeList) do
+        local item = GetClass('Item', itemId);
+        recipes:AddItem(itemId, item.Name);
+    end
+    recipes:SetSelectedScp('ON_SELECT_RECIPE');
+    recipes:SelectItemByKey(g.settings.selected);
+
+    -- chain original function
+    PUZZLECRAFT_OPEN_OLD(frame);
 end
 
 -- on select recipe
 function ON_SELECT_RECIPE()
-	local puzzlecraft = ui.GetFrame('puzzlecraft');
-	local bg = GET_CHILD(puzzlecraft, 'bg');
-	local recipes = GET_CHILD(bg, 'alchemy_recipes', 'ui::CDropList');
+    local puzzlecraft = ui.GetFrame('puzzlecraft');
+    local bg = GET_CHILD(puzzlecraft, 'bg');
+    local recipes = GET_CHILD(bg, 'alchemy_recipes', 'ui::CDropList');
 
-	-- clear slotset
-	PUZZLECRAFT_CLEAR_ALL_SLOT(bg);
-	
-	-- set selected
-	g.settings.selected = recipes:GetSelItemKey();
-	
-	-- save settings
-	TEMPLATE_SAVESETTINGS();
+    -- clear slotset
+    PUZZLECRAFT_CLEAR_ALL_SLOT(bg);
+    
+    -- set selected
+    g.settings.selected = recipes:GetSelItemKey();
+    
+    -- save settings
+    TEMPLATE_SAVESETTINGS();
 
-	-- set items
-	local recipe = g.recipeList[g.settings.selected];
-	local slotset = GET_CHILD(bg, 'slotset', 'ui::CSlotSet');
-	local slot = nil;
-	for i = 1, #recipe do
-		slot = slotset:GetSlotByRowCol(recipe[i]['row'], recipe[i]['col']);
-		SET_SLOT_ITEM_INV(slot, GetClass('Item', recipe[i]['name']));
-	end
-	CHECK_NEW_PUZZLE(puzzlecraft, slot);
+    -- set items
+    local recipe = g.recipeList[g.settings.selected];
+    local slotset = GET_CHILD(bg, 'slotset', 'ui::CSlotSet');
+    local slot = nil;
+    for i = 1, #recipe do
+        slot = slotset:GetSlotByRowCol(recipe[i]['row'], recipe[i]['col']);
+        SET_SLOT_ITEM_INV(slot, GetClass('Item', recipe[i]['name']));
+    end
+    CHECK_NEW_PUZZLE(puzzlecraft, slot);
 end
