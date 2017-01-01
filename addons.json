@@ -1,0 +1,15 @@
+[
+	{
+		"name" : "Alchemy",
+		"file" : "alchemy",
+		"extension" : "ipf",
+		"fileVersion" : "v0.1.0",
+		"releaseTag" : "alchemy",
+		"unicode" : "🔯",
+		"description" : "Add-on that add recipe selectbox on magnum opus.",
+		"tags" : [
+            "ui",
+            "magnum opus"
+		]
+	}
+}
