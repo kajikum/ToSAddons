@@ -1736,8 +1736,6 @@ function ON_PUZZLECRAFT_OPEN(frame)
 	local puzzlecraft = ui.GetFrame('puzzlecraft');
 	local bg = GET_CHILD(puzzlecraft, 'bg');
 	
-	CHAT_SYSTEM("HOGE");
-	
 	-- create or get droplist
 	local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 205, 50);
 	tolua.cast(recipes, 'ui::CDropList');
