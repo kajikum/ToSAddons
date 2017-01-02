@@ -4,9 +4,9 @@
         "file": "alchemy",
         "extension": "ipf",
         "fileVersion": "v0.1.2",
-        "releaseTag": "alchemy",
+        "releaseTag": "v0.1.2",
         "unicode": "🔯",
-        "description": "Add-on that add recipe selectbox on magnum opus.",
+        "description": "Add-on that add recipe droplist on magnum opus.",
         "tags": [
             "ui",
             "magnum opus"
