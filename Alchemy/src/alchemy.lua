@@ -1738,11 +1738,11 @@ function ON_PUZZLECRAFT_OPEN(frame)
     local bg = GET_CHILD(puzzlecraft, 'bg');
 
     -- create or get droplist
-    local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 205, 50);
+    local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 360, 50);
     tolua.cast(recipes, 'ui::CDropList');
     recipes:SetSkinName('droplist_normal');
     recipes:SetGravity(ui.LEFT, ui.TOP);
-    recipes:SetMargin(112, 29, 0, 0);
+    recipes:SetOffset(36, 575);
     recipes:Move(0,0);
     recipes:SetFontName('white_20_ol');
     recipes:SetTextAlign('left', 'center');
@@ -1755,6 +1755,18 @@ function ON_PUZZLECRAFT_OPEN(frame)
     end
     recipes:SetSelectedScp('ON_SELECT_RECIPE');
     recipes:SelectItemByKey(g.settings.selected);
+
+    -- create or get load button
+    local loadRecipeBtn = bg:CreateOrGetControl('button', 'alchemy_recipe_load_button', 0, 0, 100, 42);
+    loadRecipeBtn:SetSkinName('test_pvp_btn');
+    loadRecipeBtn:SetGravity(ui.LEFT, ui.TOP);
+    loadRecipeBtn:SetText('{@st66}Load{/}');
+    loadRecipeBtn:Move(0,0);
+    loadRecipeBtn:SetOffset(420, 565);
+    loadRecipeBtn:ShowWindow(1);
+    loadRecipeBtn:SetClickSound('button_click_stats');
+    loadRecipeBtn:SetOverSound('button_over');
+    loadRecipeBtn:SetEventScript(ui.LBUTTONUP, 'ON_SELECT_RECIPE()');
 
     -- chain original function
     PUZZLECRAFT_OPEN_OLD(frame);
