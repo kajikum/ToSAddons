@@ -1765,7 +1765,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     recipeText:SetOffset(15, 7);
     recipeText:SetText(GetClass('Item', g.settings.selected).Name);
     recipeText:SetFontName('white_16_ol');
-    recipeText:SetTextAlign('left', 'center');
+    recipeText:SetTextAlign('left', 'top');
     recipeText:ShowWindow(1);
     recipeText:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
 
