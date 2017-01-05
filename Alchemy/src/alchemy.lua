@@ -1773,7 +1773,13 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     local loadRecipeBtn = bg:CreateOrGetControl('button', 'alchemy_recipe_load_button', 0, 0, 100, 42);
     loadRecipeBtn:SetSkinName('test_pvp_btn');
     loadRecipeBtn:SetGravity(ui.LEFT, ui.TOP);
-    loadRecipeBtn:SetText('{@st66}Load{/}');
+    local btnText = "";
+    if option.GetCurrentCountry()=="Japanese" then
+        btnText = "配置";
+    else
+        btnText = "Load";
+    end
+    loadRecipeBtn:SetText('{@st66}' .. btnText .. '{/}');
     loadRecipeBtn:Move(0,0);
     loadRecipeBtn:SetOffset(420, 565);
     loadRecipeBtn:ShowWindow(1);
@@ -1785,6 +1791,32 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     PUZZLECRAFT_OPEN_OLD(frame);
 end
 
+-- sort table by codepoints
+function ALCHEMY_PAIRS(recipes)
+    local sorted = {}
+    local i = 0;
+    for key, _ in pairs(recipes) do
+        i = i + 1
+        sorted[i] = {
+            ['Name'] = dictionary.ReplaceDicIDInCompStr(GetClass('Item', key).Name),
+            ['ClassId'] = key
+        };
+    end
+    table.sort(sorted, function(a, b)
+        return a['Name'] < b['Name'];
+    end)
+    i = 0;
+    return function()
+        i = i + 1
+        if i > #sorted then
+            return nil,nil
+        else
+            local key = sorted[i].ClassId
+            return key, recipes[key]
+        end
+    end
+end
+
 -- popup recipes
 function ALCHEMY_POPUP_RECIPE_LIST()
     local puzzlecraft = ui.GetFrame('puzzlecraft');
@@ -1793,7 +1825,7 @@ function ALCHEMY_POPUP_RECIPE_LIST()
 
     -- load recipes
     local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
-    for itemId, recipe in pairs(g.recipeList) do
+    for itemId, recipe in ALCHEMY_PAIRS(g.recipeList) do
         local item = GetClass('Item', itemId);
         ui.AddDropListItem(item.Name, ' ', itemId);
     end
