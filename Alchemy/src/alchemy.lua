@@ -1710,16 +1710,13 @@ end
 CHAT_SYSTEM(string.format("%s.lua is loaded", addonName));
 
 -- save settings
-function TEMPLATE_SAVESETTINGS()
+function ALCHEMY_SAVE_SETTINGS()
     acutil.saveJSON(g.settingsFileLoc, g.settings);
 end
 
--- initialize
-function ALCHEMY_ON_INIT(addon, frame)
-    g.addon = addon;
-    g.frame = frame;
-
-    if not g.loaded then
+-- load settings
+function ALCHEMY_LOAD_SETTINGS(force)
+    if not g.loaded or force  then
         local settings, err = acutil.loadJSON(g.settingsFileLoc, g.settings);
         if err then
             CHAT_SYSTEM(string.format("[%s] cannot load setting files", addonName));
@@ -1728,52 +1725,105 @@ function ALCHEMY_ON_INIT(addon, frame)
         end
         g.loaded = true;
     end
+end
 
-    acutil.setupHook(ON_PUZZLECRAFT_OPEN, 'PUZZLECRAFT_OPEN');
+-- setup hooks
+function ALCHEMY_SETUP_HOOKS()
+    acutil.setupHook(ALCHEMY_ON_PUZZLECRAFT_OPEN, 'PUZZLECRAFT_OPEN');
+end
+
+-- initialize
+function ALCHEMY_ON_INIT(addon, frame)
+    g.addon = addon;
+    g.frame = frame;
+
+    ALCHEMY_LOAD_SETTINGS();
+    ALCHEMY_SETUP_HOOKS();
 end
 
 -- on puzzlecraft open
-function ON_PUZZLECRAFT_OPEN(frame)
+function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     local puzzlecraft = ui.GetFrame('puzzlecraft');
     local bg = GET_CHILD(puzzlecraft, 'bg');
 
-    -- create or get droplist
-    local recipes = bg:CreateOrGetControl('droplist', 'alchemy_recipes', 0, 0, 205, 50);
-    tolua.cast(recipes, 'ui::CDropList');
-    recipes:SetSkinName('droplist_normal');
-    recipes:SetGravity(ui.LEFT, ui.TOP);
-    recipes:SetMargin(112, 29, 0, 0);
-    recipes:Move(0,0);
-    recipes:SetFontName('white_20_ol');
-    recipes:SetTextAlign('left', 'center');
+    -- create or get groupbox
+    local recipeBg = bg:CreateOrGetControl('groupbox', 'alchemy_recipe_bg', 0, 0, 365, 35);
+    recipeBg = tolua.cast(recipeBg, 'ui::CGroupBox');
+    recipeBg:Move(0, 0);
+    recipeBg:SetOffset(35, 570);
+    recipeBg:EnableScrollBar(0);
+    recipeBg:EnableResizeByParent(0);
+    recipeBg:SetSkinName('test_frame_midle');
+    recipeBg:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
 
-    -- load recipes
-    recipes:ClearItems();
-    for itemId, recipe in pairs(g.recipeList) do
-        local item = GetClass('Item', itemId);
-        recipes:AddItem(itemId, item.Name);
-    end
-    recipes:SetSelectedScp('ON_SELECT_RECIPE');
-    recipes:SelectItemByKey(g.settings.selected);
+    -- create or get droplist
+    local recipeText = recipeBg:CreateOrGetControl('richtext', 'alchemy_recipe_text', 0, 0, 360, 35);
+    recipeText = tolua.cast(recipeText, 'ui::CRichText');
+    recipeText:SetFormat('%s');
+    recipeText:SetGravity(ui.LEFT, ui.TOP);
+    recipeText:Move(0, 0);
+    recipeText:SetOffset(15, 7);
+    recipeText:SetText(GetClass('Item', g.settings.selected).Name);
+    recipeText:SetFontName('white_16_ol');
+    recipeText:SetTextAlign('left', 'top');
+    recipeText:ShowWindow(1);
+    recipeText:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
+
+    -- create or get load button
+    local loadRecipeBtn = bg:CreateOrGetControl('button', 'alchemy_recipe_load_button', 0, 0, 100, 42);
+    loadRecipeBtn:SetSkinName('test_pvp_btn');
+    loadRecipeBtn:SetGravity(ui.LEFT, ui.TOP);
+    loadRecipeBtn:SetText('{@st66}Load{/}');
+    loadRecipeBtn:Move(0,0);
+    loadRecipeBtn:SetOffset(420, 565);
+    loadRecipeBtn:ShowWindow(1);
+    loadRecipeBtn:SetClickSound('button_click_stats');
+    loadRecipeBtn:SetOverSound('button_over');
+    loadRecipeBtn:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_LOAD_RECIPE()');
 
     -- chain original function
     PUZZLECRAFT_OPEN_OLD(frame);
 end
 
--- on select recipe
-function ON_SELECT_RECIPE()
+-- popup recipes
+function ALCHEMY_POPUP_RECIPE_LIST()
     local puzzlecraft = ui.GetFrame('puzzlecraft');
     local bg = GET_CHILD(puzzlecraft, 'bg');
-    local recipes = GET_CHILD(bg, 'alchemy_recipes', 'ui::CDropList');
+    local recipeBg = GET_CHILD(bg, 'alchemy_recipe_bg');
 
-    -- clear slotset
-    PUZZLECRAFT_CLEAR_ALL_SLOT(bg);
-    
+    -- load recipes
+    local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
+    for itemId, recipe in pairs(g.recipeList) do
+        local item = GetClass('Item', itemId);
+        ui.AddDropListItem(item.Name, ' ', itemId);
+    end
+end
+
+-- on select recipe
+function ALCHEMY_ON_SELECT_RECIPE(index, itemId)
+    local puzzlecraft = ui.GetFrame('puzzlecraft');
+    local bg = GET_CHILD(puzzlecraft, 'bg');
+    local recipeBg = GET_CHILD(bg, 'alchemy_recipe_bg');
+    local recipes = GET_CHILD(recipeBg, 'alchemy_recipe_text', 'ui::CDropList');
+
     -- set selected
-    g.settings.selected = recipes:GetSelItemKey();
-    
+    g.settings.selected = itemId;
+
     -- save settings
-    TEMPLATE_SAVESETTINGS();
+    ALCHEMY_SAVE_SETTINGS();
+
+    recipes:SetText(GetClass('Item', itemId).Name);
+
+    ALCHEMY_LOAD_RECIPE();
+end
+
+-- load recipe
+function ALCHEMY_LOAD_RECIPE()
+    local puzzlecraft = ui.GetFrame('puzzlecraft');
+    local bg = GET_CHILD(puzzlecraft, 'bg');
+
+   -- clear slotset
+    PUZZLECRAFT_CLEAR_ALL_SLOT(bg);
 
     -- set items
     local recipe = g.recipeList[g.settings.selected];
