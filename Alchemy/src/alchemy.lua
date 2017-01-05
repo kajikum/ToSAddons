@@ -1773,7 +1773,13 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     local loadRecipeBtn = bg:CreateOrGetControl('button', 'alchemy_recipe_load_button', 0, 0, 100, 42);
     loadRecipeBtn:SetSkinName('test_pvp_btn');
     loadRecipeBtn:SetGravity(ui.LEFT, ui.TOP);
-    loadRecipeBtn:SetText('{@st66}Load{/}');
+    local btnText = "";
+    if option.GetCurrentCountry()=="Japanese" then
+        btnText = "配置";
+    else
+        btnText = "Load";
+    end
+    loadRecipeBtn:SetText('{@st66}' .. btnText .. '{/}');
     loadRecipeBtn:Move(0,0);
     loadRecipeBtn:SetOffset(420, 565);
     loadRecipeBtn:ShowWindow(1);
