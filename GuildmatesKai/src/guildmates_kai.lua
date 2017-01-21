@@ -24,6 +24,8 @@ end
 function GUILDMATES_KAI_SETUP_HOOKS()
     acutil.setupHook(GUILDMATES_KAI_POPUP_GUILD_MEMBER, "POPUP_GUILD_MEMBER");
 	acutil.setupHook(GUILDMATES_KAI_UPDATE_GUILDINFO, "UPDATE_GUILDINFO");
+    acutil.setupHook(GUILDMATES_KAI_OPEN_PARTY_MEMBER_INFO, "OPEN_PARTY_MEMBER_INFO");
+	acutil.setupHook(GUILDMATES_KAI_REQUEST_LIKE_STATE, "REQUEST_LIKE_STATE");
 end
 
 function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
@@ -193,10 +195,24 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
 		end
 	end
 
-    ui.AddContextMenuItem(context, ScpArgMsg("ShowInfomation"), string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
+    ui.AddContextMenuItem(context, 'キャラクター情報', string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("PARTY_INVITE"), string.format("PARTY_INVITE(\"%s\")", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("ReqAddFriend"), string.format("friends.RequestRegister('%s')", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("WHISPER"), string.format("ui.WhisperTo('%s')", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("Cancel"), "None");
 	ui.OpenContextMenu(context);
+end
+
+function GUILDMATES_KAI_OPEN_PARTY_MEMBER_INFO(targetName)
+	g.pcCompareFirstPass = true;
+	party.ReqMemberDetailInfo(targetName);
+end
+
+function GUILDMATES_KAI_REQUEST_LIKE_STATE(familyName)
+	if g.pcCompareFirstPass == true then
+		g.pcCompareFirstPass = false;
+		return;
+	end
+
+	_G['REQUEST_LIKE_STATE_OLD'](familyName);
 end
