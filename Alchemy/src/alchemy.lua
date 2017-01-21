@@ -1825,11 +1825,14 @@ function ALCHEMY_POPUP_RECIPE_LIST()
     local recipeBg = GET_CHILD(bg, 'alchemy_recipe_bg');
 
     -- load recipes
-    local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
-    dropListFrame:SetOverSound("button_cursor_over_2");
-    for itemId, recipe in ALCHEMY_PAIRS(g.recipeList) do
-        local item = GetClass('Item', itemId);
-        ui.AddDropListItem(item.Name, ' ', itemId);
+    local dropListFrame = ui.GetDropListFrame('ALCHEMY_ON_SELECT_RECIPE');
+    if dropListFrame == nil then
+        local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
+        dropListFrame:SetOverSound("button_cursor_over_2");
+        for itemId, recipe in ALCHEMY_PAIRS(g.recipeList) do
+            local item = GetClass('Item', itemId);
+            ui.AddDropListItem(item.Name, ' ', itemId);
+        end
     end
 end
 
