@@ -1754,6 +1754,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     recipeBg:EnableScrollBar(0);
     recipeBg:EnableResizeByParent(0);
     recipeBg:SetSkinName('test_frame_midle');
+    recipeBg:SetOverSound('button_over');
     recipeBg:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
 
     -- create or get droplist
@@ -1824,10 +1825,14 @@ function ALCHEMY_POPUP_RECIPE_LIST()
     local recipeBg = GET_CHILD(bg, 'alchemy_recipe_bg');
 
     -- load recipes
-    local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
-    for itemId, recipe in ALCHEMY_PAIRS(g.recipeList) do
-        local item = GetClass('Item', itemId);
-        ui.AddDropListItem(item.Name, ' ', itemId);
+    local dropListFrame = ui.GetDropListFrame('ALCHEMY_ON_SELECT_RECIPE');
+    if dropListFrame == nil then
+        local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
+        dropListFrame:SetOverSound("button_cursor_over_2");
+        for itemId, recipe in ALCHEMY_PAIRS(g.recipeList) do
+            local item = GetClass('Item', itemId);
+            ui.AddDropListItem(item.Name, ' ', itemId);
+        end
     end
 end
 
@@ -1836,7 +1841,7 @@ function ALCHEMY_ON_SELECT_RECIPE(index, itemId)
     local puzzlecraft = ui.GetFrame('puzzlecraft');
     local bg = GET_CHILD(puzzlecraft, 'bg');
     local recipeBg = GET_CHILD(bg, 'alchemy_recipe_bg');
-    local recipes = GET_CHILD(recipeBg, 'alchemy_recipe_text', 'ui::CDropList');
+    local recipeText = GET_CHILD(recipeBg, 'alchemy_recipe_text', 'ui::CRichText');
 
     -- set selected
     g.settings.selected = itemId;
@@ -1844,7 +1849,7 @@ function ALCHEMY_ON_SELECT_RECIPE(index, itemId)
     -- save settings
     ALCHEMY_SAVE_SETTINGS();
 
-    recipes:SetText(GetClass('Item', itemId).Name);
+    recipeText:SetText(GetClass('Item', itemId).Name);
 
     ALCHEMY_LOAD_RECIPE();
 end
