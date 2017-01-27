@@ -16,8 +16,8 @@
         "name": "GuildmatesKai",
         "file": "guildmates_kai",
         "extension": "ipf",
-        "fileVersion": "v1.0.1",
-        "releaseTag": "v1.0.1",
+        "fileVersion": "v1.1.0",
+        "releaseTag": "v1.0.2",
         "unicode": "🏢",
         "description": "Add-on that improves guild window UI somewhat.",
         "tags": [
