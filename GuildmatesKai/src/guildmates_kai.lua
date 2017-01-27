@@ -82,7 +82,13 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
             local txt_teamname = ctrlSet:GetChild("txt_teamname");
             local txt_duty = ctrlSet:GetChild("txt_duty");
             local txt_location = ctrlSet:GetChild("txt_location");
-            txt_teamname:SetTextByKey("value", partyMemberInfo:GetName() .. " (" .. partyMemberInfo:GetLevel() .. ")");
+            local jobIcon = partyMemberInfo:GetIconInfo();
+            local jobCls  = GetClassByType("Job", jobIcon.job);
+            if nil ~= jobCls then
+                txt_teamname:SetTextByKey("value", '{img ' ..  jobCls.Icon .. ' 25 25}' .. partyMemberInfo:GetName() .. " (" .. partyMemberInfo:GetLevel() .. ")");
+            else
+                txt_teamname:SetTextByKey("value", partyMemberInfo:GetName() .. " (" .. partyMemberInfo:GetLevel() .. ")");
+            end
             txt_teamname:SetTextTooltip(partyMemberInfo:GetName());
 
             local grade = partyMemberInfo.grade;
