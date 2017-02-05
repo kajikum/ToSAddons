@@ -1,3 +1,7 @@
+local session = session;
+local ui = ui;
+
+-- addon infromation
 local addonName = 'GuildmatesKai';
 local addonNameLower = string.lower(addonName);
 local author = 'zak1ck';
@@ -14,6 +18,7 @@ local acutil = require('acutil');
 -- loaded message
 CHAT_SYSTEM(string.format("%s.lua is loaded", addonName));
 
+-- init function
 function GUILDMATES_KAI_ON_INIT(addon, frame)
     g.addon = addon;
     g.frame = frame;
@@ -21,6 +26,7 @@ function GUILDMATES_KAI_ON_INIT(addon, frame)
     GUILDMATES_KAI_SETUP_HOOKS();
 end
 
+-- Setup any hooks
 function GUILDMATES_KAI_SETUP_HOOKS()
     acutil.setupHook(GUILDMATES_KAI_POPUP_GUILD_MEMBER, "POPUP_GUILD_MEMBER");
     acutil.setupHook(GUILDMATES_KAI_UPDATE_GUILDINFO, "UPDATE_GUILDINFO");
@@ -89,7 +95,7 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
             else
                 txt_teamname:SetTextByKey("value", partyMemberInfo:GetName() .. " (" .. partyMemberInfo:GetLevel() .. ")");
             end
-            txt_teamname:SetTextTooltip(partyMemberInfo:GetName());
+            GUILDMATES_KAI_PARTY_JOB_TOOLTIP(txt_teamname, partyMemberInfo);
 
             local grade = partyMemberInfo.grade;
             if leaderAID == partyMemberInfo:GetAID() then
@@ -190,7 +196,6 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
     end
 
     if isLeader == 1 then
-
         local list = session.party.GetPartyMemberList(PARTY_GUILD);
         if list:Count() == 1 then
             ui.AddContextMenuItem(context, ScpArgMsg("Disband"), "ui.Chat('/destroyguild')");
@@ -208,6 +213,70 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
     ui.AddContextMenuItem(context, ScpArgMsg("Cancel"), "None");
     ui.OpenContextMenu(context);
 end
+
+-- Tooptip
+function GUILDMATES_KAI_PARTY_JOB_TOOLTIP(uiChild, partyMemberInfo)
+    local pcInfo = session.otherPC.GetByFamilyName(partyMemberInfo:GetName());
+    if pcInfo == nil then
+        return 0;
+    end
+
+    local cid = pcInfo:GetCID();
+    if (nil == session.otherPC.GetByStrCID(cid)) or (nil == uiChild) then
+        return 0;
+    end
+
+    local otherPCInfo = session.otherPC.GetByStrCID(cid);
+
+    local jobHistory = otherPCInfo.jobHistory;
+    local gender = otherPCInfo:GetIconInfo().gender;
+    local clsList, cnt  = GetClassList("Job");
+
+    local nowJobInfo = jobHistory:GetJobHistory(jobHistory:GetJobHistoryCount() - 1);
+    local nowJobCls;
+    if nil == nowJobInfo then
+        nowJobCls = otherPCInfo.JobName;
+    else
+        nowJobCls = GetClassByTypeFromList(clsList, nowJobInfo.jobID);
+    end;
+
+    local jobs = {};
+    for i = 0, jobHistory:GetJobHistoryCount() - 1 do
+        local jobInfo = jobHistory:GetJobHistory(i);
+
+        if jobs[jobInfo.jobID] == nil then
+            jobs[jobInfo.jobID] = jobInfo.grade;
+        else
+            if jobInfo.grade > jobs[jobInfo.jobID] then
+                jobs[jobInfo.jobID] = jobInfo.grade;
+            end
+        end
+    end
+
+    local tooltipText = ("");
+    for jobid, grade in pairs(jobs) do
+        local cls = GetClassByTypeFromList(clsList, jobid);
+
+        if cls.Name == nowJobCls.Name then
+            tooltipText = tooltipText .. ("{@st41_yellow}").. GET_JOB_NAME(cls, gender);
+        else
+            tooltipText = tooltipText .. ("{@st41}").. GET_JOB_NAME(cls, gender);
+        end
+
+        for i = 1 , 3 do
+            if i <= grade then
+                tooltipText = tooltipText ..('{img star_in_arrow 20 20}');
+            else
+                tooltipText = tooltipText ..('{img star_out_arrow 20 20}');
+            end
+        end
+        tooltipText = tooltipText ..('{nl}');
+    end
+
+    uiChild:SetTextTooltip(tooltipText);
+    return 0;
+end
+
 
 function GUILDMATES_KAI_OPEN_PARTY_MEMBER_INFO(targetName)
     g.pcCompareFirstPass = true;
