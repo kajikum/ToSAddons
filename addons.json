@@ -1,18 +1,5 @@
 [
     {
-        "name": "Alchemy",
-        "file": "alchemy",
-        "extension": "ipf",
-        "fileVersion": "v0.3.0",
-        "releaseTag": "v1.1.0",
-        "unicode": "🔯",
-        "description": "Add-on that add recipe droplist on magnum opus.",
-        "tags": [
-            "ui",
-            "magnum opus"
-        ]
-    },
-    {
         "name": "GuildmatesKai",
         "file": "guildmates_kai",
         "extension": "ipf",
