@@ -1,9 +1,9 @@
 # ToSAddons
-Addons for Tree of Savior
+Tree of Savior用のアドオン
 
 ## Alchemy
 
-Add-on that add droplist for magnum opus.
+マグナムオーパスのレシピを追加するアドオン
 
 ![Alchemy recipes](img/output_Hzl4f3.gif)
 
@@ -11,4 +11,4 @@ Add-on that add droplist for magnum opus.
 
 ## GuildmatesKai
 
-Add-on that improved Guildmates.
+Guildmatesの安定・改良版
