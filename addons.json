@@ -11,18 +11,5 @@
             "ui",
             "guild"
         ]
-    },
-    {
-        "name": "Extended Minimap",
-        "file": "extended_minimap",
-        "extension": "ipf",
-        "fileVersion": "v1.0.0",
-        "releaseTag": "v1.2.0",
-        "unicode": "🌏",
-        "description": "Add-on that improves minimap UI somewhat.",
-        "tags": [
-            "ui",
-            "guild"
-        ]
     }
 ]
