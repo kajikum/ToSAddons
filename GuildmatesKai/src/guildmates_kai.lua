@@ -215,7 +215,11 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
     end
 
     -- add menus by GUILDMATES KAI
-    ui.AddContextMenuItem(context, 'キャラクター情報', string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
+    if option.GetCurrentCountry()=="Japanese" then
+        ui.AddContextMenuItem(context, 'キャラクター情報', string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
+    else
+        ui.AddContextMenuItem(context, 'CharacterInfo', string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
+    end
     ui.AddContextMenuItem(context, ScpArgMsg("PARTY_INVITE"), string.format("PARTY_INVITE(\"%s\")", name));
     ui.AddContextMenuItem(context, ScpArgMsg("ReqAddFriend"), string.format("friends.RequestRegister('%s')", name));
 
