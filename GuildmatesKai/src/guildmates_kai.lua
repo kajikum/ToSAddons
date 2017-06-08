@@ -22,16 +22,14 @@ CHAT_SYSTEM(string.format("%s.lua is loaded", addonName));
 function GUILDMATES_KAI_ON_INIT(addon, frame)
     g.addon = addon;
     g.frame = frame;
-
-    GUILDMATES_KAI_SETUP_HOOKS();
 end
 
--- Setup any hooks
-function GUILDMATES_KAI_SETUP_HOOKS()
-    acutil.setupHook(GUILDMATES_KAI_POPUP_GUILD_MEMBER, "POPUP_GUILD_MEMBER");
-    acutil.setupHook(GUILDMATES_KAI_UPDATE_GUILDINFO, "UPDATE_GUILDINFO");
-    acutil.setupHook(GUILDMATES_KAI_OPEN_PARTY_MEMBER_INFO, "OPEN_PARTY_MEMBER_INFO");
-    acutil.setupHook(GUILDMATES_KAI_REQUEST_LIKE_STATE, "REQUEST_LIKE_STATE");
+-- logging
+function GUILDMATES_KAI_WRITE_LOG(text)
+    local f = io.open("guildmates_kai.log", "a+");
+    local time = os.date("*t");
+    f:write(("%02d:%02d:%02d: %s\n"):format(time.hour, time.min, time.sec, text));
+    f:close();
 end
 
 -- Update guild information
@@ -306,3 +304,8 @@ function GUILDMATES_KAI_REQUEST_LIKE_STATE(familyName)
 
     _G['REQUEST_LIKE_STATE_OLD'](familyName);
 end
+
+acutil.setupHook(GUILDMATES_KAI_POPUP_GUILD_MEMBER, "POPUP_GUILD_MEMBER");
+acutil.setupHook(GUILDMATES_KAI_UPDATE_GUILDINFO, "UPDATE_GUILDINFO");
+acutil.setupHook(GUILDMATES_KAI_OPEN_PARTY_MEMBER_INFO, "OPEN_PARTY_MEMBER_INFO");
+acutil.setupHook(GUILDMATES_KAI_REQUEST_LIKE_STATE, "REQUEST_LIKE_STATE");
