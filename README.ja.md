@@ -11,10 +11,10 @@ Tree of Savior用のアドオン
 
 Install(manually)
 
-1. IPFファイルをダウンロードする
+1. IPFファイルをダウンロードする。
 2. IPFファイルの名前の先頭にアンダースコア`_`を追加し、絵文字も追加して下さい。(eg. alchemy-v0.2.0.ipf -> _alchemy-🔯-v0.2.0.ipf)
-3. Tree of Saviorがインストールされているフォルダ配下の`data`フォルダ内にコピーしてください。
-4. Tree of Saviorがインストールされているフォルダ配下の`addons`フォルダ内に`alchemy`フォルダを作成してください。
+3. Tree of Saviorがインストールされているフォルダ内にある`data`フォルダ内にコピーしてください。
+4. Tree of Saviorがインストールされているフォルダ内にある`addons`フォルダ内に`alchemy`フォルダを作成してください。（`addons`フォルダがない場合は作成してください）
 
 ## GuildmatesKai
 
