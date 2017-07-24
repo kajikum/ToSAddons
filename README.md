@@ -1,6 +1,8 @@
 # ToSAddons
 Addons for Tree of Savior
 
+日本語は[こっち](README.ja.md)
+
 ## Alchemy
 
 Add-on that add droplist for magnum opus.
