@@ -35,7 +35,7 @@ end
 -- Update guild information
 function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
     if frame == nil then
-        frame = ui.GetFrame("guild");
+        frame = ui.GetFrame("guild"):GetTopParentFrame();
     end
 
     local pcparty = session.party.GetPartyInfo(PARTY_GUILD);
