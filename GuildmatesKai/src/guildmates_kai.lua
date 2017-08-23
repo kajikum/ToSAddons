@@ -140,7 +140,9 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
     chk_showonlyconnected:SetCheck(showOnlyConnected);
 
     local chk_agit_enter_onlyguild = GET_CHILD(properties, "chk_agit_enter_onlyguild");
-    chk_agit_enter_onlyguild:SetCheck(partyObj.GuildOnlyAgit);
+    if chk_agit_enter_onlyguild ~= nil then
+        chk_agit_enter_onlyguild:SetCheck(partyObj.GuildOnlyAgit);
+    end
 
     local existEnemy = GUILD_UPDATE_ENEMY_PARTY(frame, pcparty);
     if existEnemy == 1 then
