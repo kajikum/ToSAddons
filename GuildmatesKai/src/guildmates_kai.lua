@@ -44,32 +44,25 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
         return;
     end
 
+    local information = GET_CHILD(frame, "information");
+    local properties = GET_CHILD(frame, "properties");
+
     local isLeader = AM_I_LEADER(PARTY_GUILD);
     local leaderAID = pcparty.info:GetLeaderAID();
     local partyObj = GetIES(pcparty:GetObject());
 
-    local information = GET_CHILD(frame, "information");
-    local warInfo = GET_CHILD(frame, "warInfo");
-
-    local savememo = GET_CHILD_RECURSIVELY(frame, 'savememo')
-    savememo:ShowWindow(isLeader);
-    local saveNotice = GET_CHILD_RECURSIVELY(frame, 'saveNotice')
-    saveNotice:ShowWindow(isLeader);
-
-    local noticegbox = GET_CHILD_RECURSIVELY(frame, 'noticegbox')
-    noticegbox:EnableHitTest(isLeader);
-    local partynamegbox = GET_CHILD_RECURSIVELY(frame, 'partynamegbox')
-    partynamegbox:EnableHitTest(0);
-    local partynotegbox = GET_CHILD_RECURSIVELY(frame, 'partynotegbox')
-    partynotegbox:EnableHitTest(isLeader);
-
     local partyname_edit = GET_CHILD_RECURSIVELY(frame, 'partyname_edit')
     local partynote = GET_CHILD_RECURSIVELY(frame, 'partynote')
     local notice_edit = GET_CHILD_RECURSIVELY(frame, 'notice_edit')
-
     partyname_edit:SetText(pcparty.info.name);
     partynote:SetText(pcparty.info:GetProfile());
     notice_edit:SetText(pcparty.info:GetNotice());
+
+    partyname_edit:EnableHitTest(isLeader);
+    partynote:EnableHitTest(isLeader);
+
+    local savememo = GET_CHILD_RECURSIVELY(frame, 'savememo')
+    savememo:ShowWindow(isLeader);
 
     local list = session.party.GetPartyMemberList(PARTY_GUILD);
     local count = list:Count();
@@ -79,8 +72,6 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
     gbox_list:RemoveAllChild();
 
     local showOnlyConnected = config.GetXMLConfig("Guild_ShowOnlyConnected");
-
-    IMC_WARNING("ERRCODE_INFO_NORMAL", "[count:"..tostring(count));
 
     local connectionCount = 0;
     for i = 0 , count - 1 do
@@ -94,7 +85,7 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
             local txt_duty = ctrlSet:GetChild("txt_duty");
             local txt_location = ctrlSet:GetChild("txt_location");
 
-            -- GUILDMATES
+            -- GUILDMATES_KAI
             local jobIcon = partyMemberInfo:GetIconInfo();
             local jobCls  = GetClassByType("Job", jobIcon.job);
             if nil ~= jobCls then
@@ -103,9 +94,7 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
                 txt_teamname:SetTextByKey("value", partyMemberInfo:GetName() .. " (" .. partyMemberInfo:GetLevel() .. ")");
             end
             GUILDMATES_KAI_PARTY_JOB_TOOLTIP(txt_teamname, partyMemberInfo);
-            -- /GUILDMATES
-
-            IMC_WARNING("ERRCODE_INFO_NORMAL", "[name:"..partyMemberInfo:GetName());
+            -- /GUILDMATES_KAI
 
             local grade = partyMemberInfo.grade;
             if leaderAID == partyMemberInfo:GetAID() then
@@ -128,32 +117,13 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
 
                 pic_online:SetImage("guild_online");
             else
-                local logoutSec = partyMemberInfo:GetLogoutSec();
-                if logoutSec >= 0 then
-                    locationText = GET_DIFF_TIME_TXT(logoutSec);
-                else
-                    locationText = ScpArgMsg("Logout");
-                end
                 pic_online:SetImage("guild_offline");
             end
 
             txt_location:SetTextByKey("value", locationText);
             txt_location:SetTextTooltip(locationText);
+
             SET_EVENT_SCRIPT_RECURSIVELY(ctrlSet, ui.RBUTTONDOWN, "POPUP_GUILD_MEMBER");
-        end
-    end
-
-    gbox_list:SetEventScript(ui.SCROLL, 'SET_AUTHO_MEMBERS_SCROLL');
-
-    local guild_authority_popup = ui.GetFrame("guild_authority_popup");
-    if guild_authority_popup:IsVisible() == 1 then
-        local authority_count = guild_authority_popup:GetUserIValue("AUTHO_S_ROW");
-        local maxCount = count;
-        if showOnlyConnected == 1 then
-            maxCount = connectionCount;
-        end
-        if authority_count ~= maxCount then
-            guild_authority_popup:ShowWindow(0);
         end
     end
 
@@ -161,19 +131,28 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
 
     local text_memberinfo = gbox_member:GetChild("text_memberinfo");
 
-    local memberStateText = ScpArgMsg("GuildMember{Cur}/{Max}People,OnLine{On}People", "Cur", count, "Max", pcparty:GetMaxGuildMemberCount(), "On", connectionCount);
+    local memberStateText = ScpArgMsg("GuildMember{Cur}/{Max}People,OnLine{On}People", "Cur", count, "Max", GUILD_BASIC_MAX_MEMBER + partyObj.AbilLevel_MemberExtend, "On", connectionCount);
     text_memberinfo:SetTextByKey("value", memberStateText);
 
     local chk_showonlyconnected = GET_CHILD(gbox_member, "chk_showonlyconnected");
     chk_showonlyconnected:SetCheck(showOnlyConnected);
 
-    UPDATE_GUILD_ABILITY_INFO(frame, partyObj);
+    local chk_agit_enter_onlyguild = GET_CHILD(properties, "chk_agit_enter_onlyguild");
+    chk_agit_enter_onlyguild:SetCheck(partyObj.GuildOnlyAgit);
 
-    UPDATE_GUILD_WAR_INFO(frame, pcparty, partyObj);
+    local existEnemy = GUILD_UPDATE_ENEMY_PARTY(frame, pcparty);
+    if existEnemy == 1 then
+        frame:RunUpdateScript("UPDATE_REMAIN_GUILD_ENEMY_TIME",20,0,0,1);
+    else
+        frame:StopUpdateScript("UPDATE_REMAIN_GUILD_ENEMY_TIME");
+    end
+
+    ON_GUILD_UPDATE_NEUTRALITY(frame, pcparty);
+
+    GUILD_UPDATE_TOWERINFO(frame, pcparty, partyObj);
 
     UPDATE_GUILD_EVENT_INFO(frame, pcparty, partyObj);
 
-    SendSystemLog()
 end
 
 -- Popup menu
