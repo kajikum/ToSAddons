@@ -34,6 +34,7 @@ end
 
 -- Update guild information
 function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
+
     if frame == nil then
         frame = ui.GetFrame("guild");
     end
@@ -80,7 +81,7 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
 
     local showOnlyConnected = config.GetXMLConfig("Guild_ShowOnlyConnected");
 
-    IMC_WARNING("ERRCODE_INFO_NORMAL", "[count:"..tostring(count));
+    IMC_LOG("INFO_NORMAL", "[count:"..tostring(count));
 
     local connectionCount = 0;
     for i = 0 , count - 1 do
@@ -105,7 +106,7 @@ function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
             GUILDMATES_KAI_PARTY_JOB_TOOLTIP(txt_teamname, partyMemberInfo);
             -- /GUILDMATES
 
-            IMC_WARNING("ERRCODE_INFO_NORMAL", "[name:"..partyMemberInfo:GetName());
+            IMC_LOG("INFO_NORMAL", "[name:"..partyMemberInfo:GetName());
 
             local grade = partyMemberInfo.grade;
             if leaderAID == partyMemberInfo:GetAID() then
