@@ -34,9 +34,11 @@ end
 
 -- Update guild information
 function GUILDMATES_KAI_UPDATE_GUILDINFO(frame)
+    -- GUILDMATES_KAI
     if frame == nil then
         frame = ui.GetFrame("guild"):GetTopParentFrame();
     end
+    -- /GUILDMATES_KAI
 
     local pcparty = session.party.GetPartyInfo(PARTY_GUILD);
     if pcparty == nil then
@@ -191,7 +193,7 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
         end
     end
 
-    -- add menus by GUILDMATES KAI
+    -- GUILDMATES KAI
     if option.GetCurrentCountry()=="Japanese" then
         ui.AddContextMenuItem(context, 'キャラクター情報', string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
     else
@@ -199,6 +201,7 @@ function GUILDMATES_KAI_POPUP_GUILD_MEMBER(parent, ctrl)
     end
     ui.AddContextMenuItem(context, ScpArgMsg("PARTY_INVITE"), string.format("PARTY_INVITE(\"%s\")", name));
     ui.AddContextMenuItem(context, ScpArgMsg("ReqAddFriend"), string.format("friends.RequestRegister('%s')", name));
+    -- /GUILDMATES_KAI
 
     ui.AddContextMenuItem(context, ScpArgMsg("WHISPER"), string.format("ui.WhisperTo('%s')", name));
     ui.AddContextMenuItem(context, ScpArgMsg("Cancel"), "None");
