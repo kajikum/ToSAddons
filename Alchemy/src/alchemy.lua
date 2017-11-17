@@ -55,6 +55,7 @@ function ALCHEMY_SETUP_HOOKS()
     acutil.setupHook(ALCHEMY_ON_PUZZLECRAFT_OPEN, 'PUZZLECRAFT_OPEN');
 end
 
+-- dofile('../alchemy.lua'); ALCHEMY_LOAD_SETTINGS(); ALCHEMY_SETUP_HOOKS()
 -- initialize
 function ALCHEMY_ON_INIT(addon, frame)
     g.addon = addon;
@@ -78,7 +79,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     recipeBg:EnableResizeByParent(0);
     recipeBg:SetSkinName('test_frame_midle');
     recipeBg:SetOverSound('button_over');
-    recipeBg:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
+    recipeBg:SetEventScript(ui.LBUTTONDOWN, 'ALCHEMY_POPUP_RECIPE_LIST');
 
     -- create or get droplist
     local recipeText = recipeBg:CreateOrGetControl('richtext', 'alchemy_recipe_text', 0, 0, 360, 35);
@@ -91,7 +92,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     recipeText:SetFontName('white_16_ol');
     recipeText:SetTextAlign('left', 'top');
     recipeText:ShowWindow(1);
-    recipeText:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_POPUP_RECIPE_LIST');
+    recipeText:SetEventScript(ui.LBUTTONDOWN, 'ALCHEMY_POPUP_RECIPE_LIST');
 
     -- create or get load button
     local saveRecipeBtn = bg:CreateOrGetControl('button', 'alchemy_recipe_load_button', 0, 0, 100, 42);
@@ -105,7 +106,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     saveRecipeBtn:ShowWindow(1);
     saveRecipeBtn:SetClickSound('button_click_stats');
     saveRecipeBtn:SetOverSound('button_over');
-    saveRecipeBtn:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_LOAD_RECIPE()');
+    saveRecipeBtn:SetEventScript(ui.LBUTTONDOWN, 'ALCHEMY_LOAD_RECIPE');
 
     -- <edit caption="" maxwidth="120" slideshow="false" spacey="0" textalign="left center" updateparent="false"/>
     local recipeEdit = bg:CreateOrGetControl('edit', 'alchemy_recipe_edit', 0, 0, 368, 35);
@@ -130,7 +131,7 @@ function ALCHEMY_ON_PUZZLECRAFT_OPEN(frame)
     saveRecipeBtn:ShowWindow(1);
     saveRecipeBtn:SetClickSound('button_click_stats');
     saveRecipeBtn:SetOverSound('button_over');
-    saveRecipeBtn:SetEventScript(ui.LBUTTONUP, 'ALCHEMY_SAVE_RECIPE()');
+    saveRecipeBtn:SetEventScript(ui.LBUTTONDOWN, 'ALCHEMY_SAVE_RECIPE');
 
     -- chain original function
     PUZZLECRAFT_OPEN_OLD(frame);
@@ -189,7 +190,6 @@ function ALCHEMY_ON_SELECT_RECIPE(index, recipeName)
     -- save settings
     ALCHEMY_SAVE_SETTINGS();
     recipeText:SetText(recipeName);
-
 
     ALCHEMY_LOAD_RECIPE();
 end
