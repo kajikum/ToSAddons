@@ -169,7 +169,7 @@ function ALCHEMY_POPUP_RECIPE_LIST()
     -- load recipes
     local dropListFrame = ui.GetDropListFrame('ALCHEMY_ON_SELECT_RECIPE');
     if dropListFrame == nil then
-        local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE');
+        local dropListFrame = ui.MakeDropListFrame(recipeBg, 0, 0, 365, 0, 11, ui.LEFT, 'ALCHEMY_ON_SELECT_RECIPE', nil, nil);
         dropListFrame:SetOverSound("button_cursor_over_2");
         for recipeName, recipe in ALCHEMY_PAIRS(g.settings.recipeList) do
             ui.AddDropListItem(recipeName, ' ', recipeName);
